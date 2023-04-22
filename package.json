@@ -8,6 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-three/drei": "^9.65.5",
+    "@react-three/fiber": "^8.12.2",
+    "@splinetool/loader": "^0.9.304",
+    "@splinetool/r3f-spline": "^1.0.2",
+    "leva": "^0.9.34",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "three": "^0.151.3"
