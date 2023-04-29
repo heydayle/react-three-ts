@@ -30,6 +30,8 @@ const controller = () => {
     // controls.rotateSpeed = 0.1
     controls.enablePan = false;
     controls.enableZoom = false;
+    controls.dampingFactor = 0.01; // friction
+    controls.rotateSpeed = 0.001;
     controls.target.set( 0, 1, 0 );
     controls.update();
 }
