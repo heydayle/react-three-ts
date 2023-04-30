@@ -1,6 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import {sphere as blockSphere, setSphereColor, setSphereSize} from './blocks/sphereGeometry'
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 const camera = new THREE.PerspectiveCamera( 60 , window.innerWidth / window.innerHeight, 1, 1000 );
@@ -26,10 +27,16 @@ const pointLight = new THREE.PointLight(0xffffff, 1)
 pointLight.position.set(60, 100, 100);
 pointLight.castShadow = true;
 scene.add(pointLight)
+
 camera.position.set( 0, 20, 100 );
 scene.add( cube );
 scene.add( octahedron );
 scene.add( planet );
+
+blockSphere.position.y = 30
+setSphereColor('#219e61')
+setSphereSize(0.2,0.2,0.2)
+cube.add( blockSphere )
 const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -40,7 +47,7 @@ const controller = () => {
     controls.enablePan = false;
     controls.enableZoom = false;
     controls.dampingFactor = 0.01; // friction
-    controls.rotateSpeed = 0.001;
+    controls.rotateSpeed = 0.01;
     controls.target.set( 0, 1, 0 );
     controls.update();
 }
