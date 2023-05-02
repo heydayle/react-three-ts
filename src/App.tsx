@@ -1,5 +1,5 @@
 import './App.css'
-import ExampleThree from "./components/exampleThree";
+import ExampleThree from "./components/center";
 
 function App() {
 
