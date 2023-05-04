@@ -18,18 +18,18 @@ planet.position.x = 30
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.7)
 scene.add( ambientLight );
 const pointLight = new THREE.PointLight(0xffffff, 0.7)
-pointLight.position.set(100, 0, 0);
+pointLight.position.set(0, 0, 0);
 pointLight.castShadow = true;
-scene.add(pointLight)
+// scene.add(pointLight)
 
 camera.position.set( 0, 20, 100 );
 scene.add( planet );
 planet.add( octahedron )
 
 const Earth = new SphereObject()
-Earth.setMaterialColor('#219ebc')
+Earth.setMaterialColor('#ffffff', 1)
 Earth.setMeshSize(1.2,1.2,1.2)
-Earth.mesh.position.x = -30
+Earth.mesh.position.x = -60
 scene.add( Earth.mesh )
 
 const MoonEarth = new SphereObject()
@@ -37,6 +37,7 @@ MoonEarth.setMaterialColor('#f1f1f1')
 MoonEarth.setMeshSize(0.5,0.5,0.5)
 MoonEarth.mesh.position.x = 30
 Earth.mesh.add( MoonEarth.mesh )
+Earth.mesh.add( pointLight )
 
 const MoonMesh = new SphereObject()
 MoonMesh.setMaterialColor('#ff9e9e')
