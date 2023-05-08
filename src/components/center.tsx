@@ -14,13 +14,13 @@ const plan = new THREE.SphereGeometry( 10, 40, 30 );
 const  materialPlan = new THREE.MeshLambertMaterial( { color: 'gray' } );
 const planet = new THREE.Mesh( plan, materialPlan );
 planet.scale.set(0.1,0.1,0.1)
-planet.position.x = 150
+planet.position.x = 300
 
 const pointLight = new THREE.PointLight(0xff842e, 1)
 pointLight.position.set(0, 0, 0);
 pointLight.castShadow = true;
 
-camera.position.set( 0, 20, 100 );
+camera.position.set( 0, 20, 300 );
 scene.add( planet );
 planet.add( octahedron )
 
@@ -47,17 +47,23 @@ Sun.mesh.add( Venus.mesh )
 
 const Earth = new SphereObject()
 Earth.setMaterialColor('#0eb7ff', 1)
-Earth.setMeshSize(0.15,0.15,0.15)
+Earth.setMeshSize(0.1,0.1,0.1)
 Earth.mesh.position.x = -55
 // Sun.mesh.add( Earth.mesh )
-scene.add(Earth.mesh)
+Sun.mesh.add(Earth.mesh)
 
 const Mars = new SphereObject()
 Mars.setMaterialColor('#ab624a', 1)
 Mars.setMeshSize(0.15,0.15,0.15)
 Mars.mesh.position.x = -70
-Mars.mesh.position.y = -70
+// Mars.mesh.position.y = -80
 Sun.mesh.add( Mars.mesh )
+
+const Jupiter = new SphereObject()
+Jupiter.setMaterialColor('#e08b71', 1)
+Jupiter.setMeshSize(0.5,0.5,0.5)
+Jupiter.mesh.position.x = -240
+Sun.mesh.add( Jupiter.mesh )
 
 const MoonEarth = new SphereObject()
 MoonEarth.setMaterialColor('#f1f1f1')
@@ -109,14 +115,29 @@ const aroundSun = (
         mesh.rotation.z += rotationOptions.z
     }
 }
+function zoomIn() {
+    console.log(camera.position.z)
+    if (camera.position.z > 0) camera.position.z -= 100
+}
+function zoomOut() {
+    camera.position.z += 100
+}
+function setDefaultCamera() {
+    camera.position.x = 0
+    camera.position.y = 0
+    camera.position.z = 300
+}
+function onPlanetAround() {
+    aroundSun(Mercury.mesh, 0, 0.01, 0, true)
+    aroundSun(Venus.mesh, 0, 0.0099, 0, false, { x: 0.01, y: 0.01, z: 0.01})
+    aroundSun(Earth.mesh, 0, 0.006, 0, false, { x: 0, y: 0.01, z: 0.01})
+    aroundSun(Mars.mesh, 0.0001, 0.0007, 0.001, false, { x: 0.1, y: 1, z: 0.01})
+    aroundSun(planet, 0.0001, 0.0004, 0, false, { x: 0, y: 0.007, z: 0})
+    aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false)
+}
 function animate() {
     controller()
-    aroundSun(Mercury.mesh, 0, 0.01, 0, true)
-    aroundSun(Venus.mesh, 0, 0.009, 0, false, { x: 0.01, y: 0.01, z: 0.01})
-    aroundSun(Earth.mesh, 0, 0.007, 0, false, { x: 0, y: 0.01, z: 0.01})
-    aroundSun(Mars.mesh, 0.0001, 0.0001, 0.001, false, { x: 0.1, y: 1, z: 0.01})
-    aroundSun(planet, 0.001, 0.0009, 0, false)
-    planet.rotation.y += 0.007
+    onPlanetAround()
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
     return <></>
@@ -124,7 +145,17 @@ function animate() {
 animate()
 const three = () => {
     return (
-        <div/>
+        <div style={{position: "absolute"}}>
+            <button onClick={zoomIn}>
+                Zoom in
+            </button>
+            <button onClick={zoomOut}>
+                Zoom out
+            </button>
+            <button onClick={setDefaultCamera}>
+                Default
+            </button>
+        </div>
     )
 }
 export default three
