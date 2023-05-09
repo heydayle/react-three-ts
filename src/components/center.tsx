@@ -35,6 +35,8 @@ scene.add( Sun.mesh )
 Sun.mesh.add( pointLight )
 pointLight.scale.set(1,1,1)
 Sun.setEmissiveMaterial('#ffffff')
+const sunTexture = new THREE.TextureLoader().load("/src/assets/imgs/textures/sun.png")
+Sun.setTexture(sunTexture)
 
 
 const Mercury = new SphereObject()
@@ -57,9 +59,6 @@ Earth.setMeshSize(0.1,0.1,0.1)
 Earth.mesh.position.x = -55
 Earth.setTexture(earthTexture, earthNotCloudsTexture)
 Earth.setEmissiveMaterialPlanet('#ffffff')
-// earthCamera.position.add(Earth.mesh.position.clone())
-// earthCamera.position.z = 10
-// Sun.mesh.add( Earth.mesh )
 Sun.mesh.add(Earth.mesh)
 
 const Mars = new SphereObject()
@@ -92,6 +91,7 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio( 4000/2080 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+const controls = new OrbitControls(camera, renderer.domElement)
 
 
 // Khai báo biến global để lưu trữ mesh đang được click
@@ -111,7 +111,7 @@ renderer.domElement.addEventListener('click', function(event) {
     if (intersects.length > 0) {
         selectedObject = intersects[0];
     } else {
-        selectedObject = null;
+        return
     }
 });
 let currentLastPositionCamera = new THREE.Vector3()
@@ -119,6 +119,7 @@ let currentLastPositionCamera = new THREE.Vector3()
 function followSelectedObject() {
     let position = selectedObject?.object?.getWorldPosition(new THREE.Vector3())
     if (selectedObject && selectedObject.object.name !== 'Sun') {
+        controls.enabled = false;
         isFreeze = false
         const newPosition = new THREE.Vector3()
         const SunPositionWorld = Sun.mesh.getWorldPosition(new THREE.Vector3())
@@ -137,7 +138,6 @@ const controller = () => {
     controls.dampingFactor = 0.01;
     controls.rotateSpeed = 0.0009;
     controls.target.set( 0, 0, 10 );
-    controls.update();
 }
 
 let sunPosition = Sun.mesh.position.clone();
@@ -174,7 +174,7 @@ function setDefaultCamera() {
     camera.fov = 60
     camera.updateProjectionMatrix();
     camera.position.x = 0
-    camera.position.y = 0
+    camera.position.y = 15
     camera.position.z = 30
     selectedObject = null
 }
@@ -193,17 +193,19 @@ function onPlanetAround() {
     if (isFreeze) return
     aroundSun(Mercury.mesh, 0, 0.01, 0, true)
     aroundSun(Venus.mesh, 0, 0.0099, 0, false, { x: 0.01, y: 0.01, z: 0.01})
-    aroundSun(Earth.mesh, 0, 0.006, 0, false, { x: 0, y: 0.01, z: 0.01})
+    aroundSun(Earth.mesh, 0, 0.006, 0, false, { x: 0, y: 0.01, z: 0})
     aroundSun(Mars.mesh, 0.0001, 0.0007, 0.001, false, { x: 0.1, y: 1, z: 0.01})
     aroundSun(planet, 0.0001, 0.0004, 0, false, { x: 0, y: 0.007, z: 0})
     aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false)
 }
 function animate() {
+    controller()
     onPlanetAround()
     requestAnimationFrame( animate );
-    controller()
     followSelectedObject();
+    Sun.mesh.rotation.y += 0.01
     renderer.render( scene, camera );
+    controls.update();
 }
 animate()
 const three = () => {

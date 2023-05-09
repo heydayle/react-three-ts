@@ -18,21 +18,22 @@ export default class SphereObject {
     }
     public setEmissiveMaterial = (color: any) => {
         this.material.emissive = new THREE.Color(color)
-        this.material.emissiveIntensity = 80
+        this.material.emissiveIntensity = 0.1
         this.material.roughness = 100
         this.material.shininess = 100
         this.material.specular = new THREE.Color(color)
         this.material.side = THREE.DoubleSide
+        // this.material.shader = new THREE.ShaderChunk()
     }
     public setEmissiveMaterialPlanet = (color: any) => {
         this.material.emissive = new THREE.Color(color)
-        this.material.emissiveIntensity = 0.01
+        this.material.emissiveIntensity = 0.05
         this.material.roughness = 0.1
         this.material.shininess = 10
         this.material.specular = new THREE.Color(color)
         this.material.side = THREE.DoubleSide
     }
-    public setTexture = (texture: Texture, textureBump: Texture | undefined) => {
+    public setTexture = (texture: Texture, textureBump: Texture | undefined = undefined) => {
         this.material.map = texture
         this.material.bumpMap = textureBump || null
         this.material.bumpScale = 0.005;
