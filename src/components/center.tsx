@@ -16,17 +16,16 @@ const planet = new THREE.Mesh( plan, materialPlan );
 planet.scale.set(0.1,0.1,0.1)
 planet.position.x = 300
 
-const pointLight = new THREE.PointLight(0xff842e, 1, 100)
+const pointLight = new THREE.PointLight(0xff842e, 1, 1000)
 pointLight.position.set(0, 0, 0);
 pointLight.castShadow = true;
 
-camera.position.set( 0, 20, 300 );
+camera.position.set( -40, -20, 50 );
 scene.add( planet );
 planet.add( octahedron )
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.2)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.1)
 scene.add(ambientLight)
-// const ambientLightSun = new THREE.AmbientLight(0xffffff, 0.1)
 const Sun = new SphereObject()
 Sun.setMaterialColor('#ff842e', 1)
 Sun.setMeshSize(0.5,0.5,0.5)
@@ -120,16 +119,15 @@ const aroundSun = (
     }
 }
 function zoomIn() {
-    console.log(camera.position.z)
-    if (camera.position.z > 0) camera.position.z -= 100
+    if (camera.position.z > 0) camera.position.z -= 10
 }
 function zoomOut() {
-    camera.position.z += 100
+    camera.position.z += 10
 }
 function setDefaultCamera() {
     camera.position.x = 0
     camera.position.y = 0
-    camera.position.z = 300
+    camera.position.z = 30
 }
 function onPlanetAround() {
     aroundSun(Mercury.mesh, 0, 0.01, 0, true)
