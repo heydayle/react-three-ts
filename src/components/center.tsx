@@ -30,6 +30,7 @@ const Sun = new SphereObject()
 Sun.setMaterialColor('#ff842e', 1)
 Sun.setMeshSize(0.5,0.5,0.5)
 Sun.mesh.position.x = 0
+Sun.mesh.name = 'Sun'
 scene.add( Sun.mesh )
 Sun.mesh.add( pointLight )
 pointLight.scale.set(1,1,1)
@@ -112,16 +113,18 @@ renderer.domElement.addEventListener('click', function(event) {
         selectedObject = null;
     }
 });
+let currentLastPositionCamera = new THREE.Vector3()
 // Hàm để camera bám theo mesh
 function followSelectedObject() {
     let position = selectedObject?.object?.getWorldPosition(new THREE.Vector3())
-    if (selectedObject) {
+    if (selectedObject && selectedObject.object.name !== 'Sun') {
+        isFreeze = false
         const newPosition = new THREE.Vector3()
         const SunPositionWorld = Sun.mesh.getWorldPosition(new THREE.Vector3())
         newPosition.copy(SunPositionWorld).add(position);
-        newPosition.z = 5
 
         camera.position.lerp(newPosition, 0.01);
+        currentLastPositionCamera = newPosition
         camera.lookAt(position);
     }
 }
@@ -168,8 +171,17 @@ function setDefaultCamera() {
     camera.position.x = 0
     camera.position.y = 0
     camera.position.z = 30
+    selectedObject = null
+}
+let isFreeze = false
+function freeze() {
+    isFreeze = !isFreeze
+}
+function followEarth(planet: any) {
+    selectedObject = { object: planet.mesh }
 }
 function onPlanetAround() {
+    if (isFreeze) return
     aroundSun(Mercury.mesh, 0, 0.01, 0, true)
     aroundSun(Venus.mesh, 0, 0.0099, 0, false, { x: 0.01, y: 0.01, z: 0.01})
     aroundSun(Earth.mesh, 0, 0.006, 0, false, { x: 0, y: 0.01, z: 0.01})
@@ -188,14 +200,26 @@ animate()
 const three = () => {
     return (
         <div style={{position: "absolute"}}>
+            <button onClick={setDefaultCamera}>
+                Default camera
+            </button>
             <button onClick={zoomIn}>
                 Zoom in
             </button>
             <button onClick={zoomOut}>
                 Zoom out
             </button>
-            <button onClick={setDefaultCamera}>
-                Default
+            <button onClick={freeze}>
+                Freeze
+            </button>
+            <button onClick={() => followEarth(Earth)}>
+                Earth
+            </button>
+            <button onClick={() => followEarth(MoonEarth)}>
+                Moon
+            </button>
+            <button onClick={() => followEarth({mesh: planet})}>
+                Planet
             </button>
         </div>
     )
