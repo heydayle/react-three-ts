@@ -115,6 +115,7 @@ renderer.domElement.addEventListener('click', function(event) {
     }
 });
 let currentLastPositionCamera = new THREE.Vector3()
+let isFreeze = false
 // Hàm để camera bám theo mesh
 function followSelectedObject() {
     let position = selectedObject?.object?.getWorldPosition(new THREE.Vector3())
@@ -178,7 +179,6 @@ function setDefaultCamera() {
     camera.position.z = 30
     selectedObject = null
 }
-let isFreeze = false
 function freeze() {
     isFreeze = !isFreeze
 }
@@ -190,20 +190,21 @@ function followEarth(planet: any) {
     camera.updateProjectionMatrix();
 }
 function onPlanetAround() {
-    if (isFreeze) return
-    aroundSun(Mercury.mesh, 0, 0.01, 0, true)
-    aroundSun(Venus.mesh, 0, 0.0099, 0, false, { x: 0.01, y: 0.01, z: 0.01})
-    aroundSun(Earth.mesh, 0, 0.006, 0, false, { x: 0, y: 0.01, z: 0})
-    aroundSun(Mars.mesh, 0.0001, 0.0007, 0.001, false, { x: 0.1, y: 1, z: 0.01})
-    aroundSun(planet, 0.0001, 0.0004, 0, false, { x: 0, y: 0.007, z: 0})
-    aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false)
+    if (!isFreeze) {
+        aroundSun(Mercury.mesh, 0, 0.01, 0, true)
+        aroundSun(Venus.mesh, 0, 0.0099, 0, false, {x: 0.01, y: 0.01, z: 0.01})
+        aroundSun(Earth.mesh, 0, 0.006, 0, false, {x: 0, y: 0.01, z: 0})
+        aroundSun(Mars.mesh, 0.0001, 0.0007, 0.001, false, {x: 0.1, y: 1, z: 0.01})
+        aroundSun(planet, 0.0001, 0.0004, 0, false, {x: 0, y: 0.007, z: 0})
+        aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false)
+    }
 }
 function animate() {
     controller()
     onPlanetAround()
     requestAnimationFrame( animate );
     followSelectedObject();
-    Sun.mesh.rotation.y += 0.01
+    Sun.mesh.rotation.y += isFreeze ? 0 : 0.01
     renderer.render( scene, camera );
     controls.update();
 }
