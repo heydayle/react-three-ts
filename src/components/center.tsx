@@ -24,7 +24,7 @@ camera.position.set( -40, -20, 50 );
 scene.add( planet );
 planet.add( octahedron )
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 1)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.4)
 scene.add(ambientLight)
 const Sun = new SphereObject()
 Sun.setMaterialColor('#ff842e', 1)
