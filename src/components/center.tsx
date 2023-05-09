@@ -16,7 +16,7 @@ const planet = new THREE.Mesh( plan, materialPlan );
 planet.scale.set(0.1,0.1,0.1)
 planet.position.x = 160
 
-const pointLight = new THREE.PointLight(0xff842e, 1, 1000)
+const pointLight = new THREE.PointLight(0xffffff, 1, 100)
 pointLight.position.set(0, 0, 0);
 pointLight.castShadow = true;
 
@@ -27,14 +27,14 @@ planet.add( octahedron )
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.4)
 scene.add(ambientLight)
 const Sun = new SphereObject()
-Sun.setMaterialColor('#ff842e', 1)
+Sun.setMaterialColor('#ffffff', 1)
 Sun.setMeshSize(0.5,0.5,0.5)
 Sun.mesh.position.x = 0
 Sun.mesh.name = 'Sun'
 scene.add( Sun.mesh )
 Sun.mesh.add( pointLight )
 pointLight.scale.set(1,1,1)
-Sun.setEmissiveMaterial('#ff842e')
+Sun.setEmissiveMaterial('#ffffff')
 
 
 const Mercury = new SphereObject()
@@ -49,13 +49,14 @@ Venus.setMeshSize(0.1,0.1,0.1)
 Venus.mesh.position.x = 45
 Sun.mesh.add( Venus.mesh )
 
-// const earthCamera = new THREE.CameraHelper(camera);
-// earthCamera.name = 'earthCamera';
-// scene.add(earthCamera)
+const earthTexture = new THREE.TextureLoader().load("/src/assets/imgs/textures/earth.png")
+const earthNotCloudsTexture = new THREE.TextureLoader().load("/src/assets/imgs/textures/earthNotClouds.png")
 const Earth = new SphereObject()
 Earth.setMaterialColor('#0eb7ff', 1)
 Earth.setMeshSize(0.1,0.1,0.1)
 Earth.mesh.position.x = -55
+Earth.setTexture(earthTexture, earthNotCloudsTexture)
+Earth.setEmissiveMaterialPlanet('#ffffff')
 // earthCamera.position.add(Earth.mesh.position.clone())
 // earthCamera.position.z = 10
 // Sun.mesh.add( Earth.mesh )
@@ -162,12 +163,16 @@ const aroundSun = (
     }
 }
 function zoomIn() {
-    if (camera.position.z > 0) camera.position.z -= 10
+    camera.fov -= 5
+    camera.updateProjectionMatrix();
 }
 function zoomOut() {
-    camera.position.z += 10
+    camera.fov += 5
+    camera.updateProjectionMatrix();
 }
 function setDefaultCamera() {
+    camera.fov = 60
+    camera.updateProjectionMatrix();
     camera.position.x = 0
     camera.position.y = 0
     camera.position.z = 30
@@ -178,7 +183,11 @@ function freeze() {
     isFreeze = !isFreeze
 }
 function followEarth(planet: any) {
+    camera.fov = 60
+    const fov = camera.fov
+    camera.fov = fov * 0.5
     selectedObject = { object: planet.mesh }
+    camera.updateProjectionMatrix();
 }
 function onPlanetAround() {
     if (isFreeze) return
