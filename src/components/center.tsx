@@ -35,7 +35,7 @@ scene.add( Sun.mesh )
 Sun.mesh.add( pointLight )
 pointLight.scale.set(1,1,1)
 Sun.setEmissiveMaterial('#ffffff')
-const sunTexture = new THREE.TextureLoader().load("/src/assets/imgs/textures/sun.png")
+const sunTexture = new THREE.TextureLoader().load("src/assets/imgs/textures/sun.png")
 Sun.setTexture(sunTexture)
 
 
@@ -51,8 +51,8 @@ Venus.setMeshSize(0.1,0.1,0.1)
 Venus.mesh.position.x = 45
 Sun.mesh.add( Venus.mesh )
 
-const earthTexture = new THREE.TextureLoader().load("/src/assets/imgs/textures/earth.png")
-const earthNotCloudsTexture = new THREE.TextureLoader().load("/src/assets/imgs/textures/earthNotClouds.png")
+const earthTexture = new THREE.TextureLoader().load("src/assets/imgs/textures/earth.png")
+const earthNotCloudsTexture = new THREE.TextureLoader().load("src/assets/imgs/textures/earthNotClouds.png")
 const Earth = new SphereObject()
 Earth.setMaterialColor('#0eb7ff', 1)
 Earth.setMeshSize(0.1,0.1,0.1)
