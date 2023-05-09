@@ -13,10 +13,15 @@ octahedron.rotation.x = 90
 const plan = new THREE.SphereGeometry( 10, 40, 30 );
 const  materialPlan = new THREE.MeshLambertMaterial( { color: 'gray' } );
 const planet = new THREE.Mesh( plan, materialPlan );
-planet.scale.set(0.1,0.1,0.1)
-planet.position.x = 160
+const saturnTexture = new THREE.TextureLoader().load("/textures/saturn.png")
+const saturnRingTexture = new THREE.TextureLoader().load("/textures/saturn-ring.png")
+planet.scale.set(0.5,0.5,0.5)
+materialPlan.map = saturnTexture
+materialRing.map = saturnRingTexture
+materialRing.bumpScale = 0.05
+planet.position.x = 290
 
-const pointLight = new THREE.PointLight(0xffffff, 1, 100)
+const pointLight = new THREE.PointLight(0xffffff, 1, 200)
 pointLight.position.set(0, 0, 0);
 pointLight.castShadow = true;
 
@@ -56,7 +61,7 @@ const earthNotCloudsTexture = new THREE.TextureLoader().load("/textures/earthNot
 const Earth = new SphereObject()
 Earth.setMaterialColor('#0eb7ff', 1)
 Earth.setMeshSize(0.1,0.1,0.1)
-Earth.mesh.position.x = -55
+Earth.mesh.position.x = -65
 Earth.setTexture(earthTexture, earthNotCloudsTexture)
 Earth.setEmissiveMaterialPlanet('#ffffff')
 Sun.mesh.add(Earth.mesh)
@@ -64,20 +69,23 @@ Sun.mesh.add(Earth.mesh)
 const Mars = new SphereObject()
 Mars.setMaterialColor('#ab624a', 1)
 Mars.setMeshSize(0.15,0.15,0.15)
-Mars.mesh.position.x = -70
-// Mars.mesh.position.y = -80
+Mars.mesh.position.x = -90
 Sun.mesh.add( Mars.mesh )
 
 const Jupiter = new SphereObject()
 Jupiter.setMaterialColor('#e08b71', 1)
-Jupiter.setMeshSize(0.5,0.5,0.5)
+Jupiter.setMeshSize(0.7,0.7,0.7)
 Jupiter.mesh.position.x = -240
+const jupiterTexture = new THREE.TextureLoader().load("/textures/jupiter.png")
+Jupiter.setTexture(jupiterTexture)
 Sun.mesh.add( Jupiter.mesh )
 
 const MoonEarth = new SphereObject()
+const moonTexture = new THREE.TextureLoader().load("/textures/moon.png")
 MoonEarth.setMaterialColor('#f1f1f1')
 MoonEarth.setMeshSize(0.2,0.2,0.2)
-MoonEarth.mesh.position.x = 30
+MoonEarth.mesh.position.x = 10
+MoonEarth.setTexture(moonTexture, moonTexture)
 Earth.mesh.add( MoonEarth.mesh )
 
 const MoonMesh = new SphereObject()
@@ -163,6 +171,18 @@ const aroundSun = (
         mesh.rotation.z += rotationOptions.z
     }
 }
+const aroundEarth = (
+    mesh: Mesh,
+    angleX: number,
+    angleY: number,
+    angleZ: number,
+    reverse: Boolean = false) => {
+    const y: number = reverse ? -1 : 1
+    const earthPosition = Earth.mesh.position.clone()
+    mesh.position.sub(earthPosition)
+    mesh.position.applyAxisAngle(new THREE.Vector3(0, y + 1, 0), 1);
+    mesh.position.add(earthPosition)
+}
 function zoomIn() {
     camera.fov -= 5
     camera.updateProjectionMatrix();
@@ -185,7 +205,7 @@ function freeze() {
 function followEarth(planet: any) {
     camera.fov = 60
     const fov = camera.fov
-    camera.fov = fov * 0.5
+    camera.fov = fov * 0.2
     selectedObject = { object: planet.mesh }
     camera.updateProjectionMatrix();
 }
@@ -196,7 +216,8 @@ function onPlanetAround() {
         aroundSun(Earth.mesh, 0, 0.006, 0, false, {x: 0, y: 0.01, z: 0})
         aroundSun(Mars.mesh, 0.0001, 0.0007, 0.001, false, {x: 0.1, y: 1, z: 0.01})
         aroundSun(planet, 0.0001, 0.0004, 0, false, {x: 0, y: 0.007, z: 0})
-        aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false)
+        aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false, {x: 0, y: 0.08, z: 0})
+        aroundEarth(MoonEarth.mesh, 0, 1, 0, true)
     }
 }
 function animate() {
@@ -204,7 +225,7 @@ function animate() {
     onPlanetAround()
     requestAnimationFrame( animate );
     followSelectedObject();
-    Sun.mesh.rotation.y += isFreeze ? 0 : 0.01
+    Sun.mesh.rotation.y += isFreeze ? 0 : 0.001
     renderer.render( scene, camera );
     controls.update();
 }
