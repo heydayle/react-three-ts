@@ -14,7 +14,7 @@ const plan = new THREE.SphereGeometry( 10, 40, 30 );
 const  materialPlan = new THREE.MeshLambertMaterial( { color: 'gray' } );
 const planet = new THREE.Mesh( plan, materialPlan );
 planet.scale.set(0.1,0.1,0.1)
-planet.position.x = 300
+planet.position.x = 160
 
 const pointLight = new THREE.PointLight(0xff842e, 1, 1000)
 pointLight.position.set(0, 0, 0);
@@ -24,7 +24,7 @@ camera.position.set( -40, -20, 50 );
 scene.add( planet );
 planet.add( octahedron )
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.1)
+const ambientLight = new THREE.AmbientLight(0xffffff, 1)
 scene.add(ambientLight)
 const Sun = new SphereObject()
 Sun.setMaterialColor('#ff842e', 1)
@@ -48,10 +48,15 @@ Venus.setMeshSize(0.1,0.1,0.1)
 Venus.mesh.position.x = 45
 Sun.mesh.add( Venus.mesh )
 
+// const earthCamera = new THREE.CameraHelper(camera);
+// earthCamera.name = 'earthCamera';
+// scene.add(earthCamera)
 const Earth = new SphereObject()
 Earth.setMaterialColor('#0eb7ff', 1)
 Earth.setMeshSize(0.1,0.1,0.1)
 Earth.mesh.position.x = -55
+// earthCamera.position.add(Earth.mesh.position.clone())
+// earthCamera.position.z = 10
 // Sun.mesh.add( Earth.mesh )
 Sun.mesh.add(Earth.mesh)
 
@@ -85,6 +90,41 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio( 4000/2080 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+
+
+// Khai báo biến global để lưu trữ mesh đang được click
+let selectedObject: any = null;
+// Tạo một sự kiện "click" trên canvas renderer
+renderer.domElement.addEventListener('click', function(event) {
+    // Tính toán vị trí của click trên màn hình
+    let mouse = new THREE.Vector2();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    let raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, camera);
+
+    let intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+        selectedObject = intersects[0];
+    } else {
+        selectedObject = null;
+    }
+});
+// Hàm để camera bám theo mesh
+function followSelectedObject() {
+    let position = selectedObject?.object?.getWorldPosition(new THREE.Vector3())
+    if (selectedObject) {
+        const newPosition = new THREE.Vector3()
+        const SunPositionWorld = Sun.mesh.getWorldPosition(new THREE.Vector3())
+        newPosition.copy(SunPositionWorld).add(position);
+        newPosition.z = 5
+
+        camera.position.lerp(newPosition, 0.01);
+        camera.lookAt(position);
+    }
+}
 
 const controller = () => {
     const controls = new OrbitControls(camera, renderer.domElement)
@@ -138,11 +178,11 @@ function onPlanetAround() {
     aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false)
 }
 function animate() {
-    controller()
     onPlanetAround()
     requestAnimationFrame( animate );
+    controller()
+    followSelectedObject();
     renderer.render( scene, camera );
-    return <></>
 }
 animate()
 const three = () => {
