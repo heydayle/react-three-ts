@@ -35,7 +35,7 @@ scene.add( Sun.mesh )
 Sun.mesh.add( pointLight )
 pointLight.scale.set(1,1,1)
 Sun.setEmissiveMaterial('#ffffff')
-const sunTexture = new THREE.TextureLoader().load("src/assets/imgs/textures/sun.png")
+const sunTexture = new THREE.TextureLoader().load("/textures/sun.png")
 Sun.setTexture(sunTexture)
 
 
@@ -51,8 +51,8 @@ Venus.setMeshSize(0.1,0.1,0.1)
 Venus.mesh.position.x = 45
 Sun.mesh.add( Venus.mesh )
 
-const earthTexture = new THREE.TextureLoader().load("src/assets/imgs/textures/earth.png")
-const earthNotCloudsTexture = new THREE.TextureLoader().load("src/assets/imgs/textures/earthNotClouds.png")
+const earthTexture = new THREE.TextureLoader().load("/textures/earth.png")
+const earthNotCloudsTexture = new THREE.TextureLoader().load("/textures/earthNotClouds.png")
 const Earth = new SphereObject()
 Earth.setMaterialColor('#0eb7ff', 1)
 Earth.setMeshSize(0.1,0.1,0.1)
@@ -191,7 +191,7 @@ function followEarth(planet: any) {
 }
 function onPlanetAround() {
     if (!isFreeze) {
-        aroundSun(Mercury.mesh, 0, 0.01, 0, true)
+        aroundSun(Mercury.mesh, 0, 0.06, 0, true)
         aroundSun(Venus.mesh, 0, 0.0099, 0, false, {x: 0.01, y: 0.01, z: 0.01})
         aroundSun(Earth.mesh, 0, 0.006, 0, false, {x: 0, y: 0.01, z: 0})
         aroundSun(Mars.mesh, 0.0001, 0.0007, 0.001, false, {x: 0.1, y: 1, z: 0.01})
