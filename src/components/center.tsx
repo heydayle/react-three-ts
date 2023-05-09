@@ -16,7 +16,7 @@ const planet = new THREE.Mesh( plan, materialPlan );
 planet.scale.set(0.1,0.1,0.1)
 planet.position.x = 300
 
-const pointLight = new THREE.PointLight(0xff842e, 1)
+const pointLight = new THREE.PointLight(0xff842e, 1, 100)
 pointLight.position.set(0, 0, 0);
 pointLight.castShadow = true;
 
@@ -24,14 +24,18 @@ camera.position.set( 0, 20, 300 );
 scene.add( planet );
 planet.add( octahedron )
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.9)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.2)
+scene.add(ambientLight)
+// const ambientLightSun = new THREE.AmbientLight(0xffffff, 0.1)
 const Sun = new SphereObject()
 Sun.setMaterialColor('#ff842e', 1)
 Sun.setMeshSize(0.5,0.5,0.5)
 Sun.mesh.position.x = 0
 scene.add( Sun.mesh )
 Sun.mesh.add( pointLight )
-Sun.mesh.add( ambientLight );
+pointLight.scale.set(1,1,1)
+Sun.setEmissiveMaterial('#ff842e')
+
 
 const Mercury = new SphereObject()
 Mercury.setMaterialColor('#f2f3f3', 1)
@@ -79,7 +83,7 @@ planet.add( MoonMesh.mesh )
 Sun.mesh.add( planet )
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setPixelRatio( 4000/2080 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
