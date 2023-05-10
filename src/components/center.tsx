@@ -122,7 +122,7 @@ renderer.domElement.addEventListener('click', function(event) {
         return
     }
 });
-let currentLastPositionCamera = new THREE.Vector3()
+let lastPositionCamera = new THREE.Vector3()
 let isFreeze = false
 // Hàm để camera bám theo mesh
 function followSelectedObject() {
@@ -130,13 +130,17 @@ function followSelectedObject() {
     if (selectedObject && selectedObject.object.name !== 'Sun') {
         controls.enabled = false;
         isFreeze = false
-        const newPosition = new THREE.Vector3()
+        const newPosition = new THREE.Vector3(0,0,0)
         const SunPositionWorld = Sun.mesh.getWorldPosition(new THREE.Vector3())
         newPosition.copy(SunPositionWorld).add(position);
 
-        camera.position.lerp(newPosition, 0.01);
-        currentLastPositionCamera = newPosition
         camera.lookAt(position);
+        // position.y *=-20
+        // position.z = 100
+        // position.z -=10
+        camera.position.set(position.x, position.y, position.z - 10);
+        // camera.position.lerp(position, 0.01);
+        lastPositionCamera = newPosition
     }
 }
 
