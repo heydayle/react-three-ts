@@ -2,7 +2,7 @@ import React from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import SphereObject from './blocks/sphereGeometry'
-import { Mesh } from "three";
+import {Camera, Mesh} from "three";
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 60 , window.innerWidth / window.innerHeight, 1, 1000 );
 
@@ -116,7 +116,7 @@ renderer.domElement.addEventListener('click', function(event) {
 
     let intersects = raycaster.intersectObjects(scene.children);
 
-    if (intersects.length > 0) {
+    if (intersects.length > 0 && intersects[0].object.name !== 'Sun') {
         selectedObject = intersects[0];
     } else {
         return
@@ -127,18 +127,16 @@ let isFreeze = false
 // Hàm để camera bám theo mesh
 function followSelectedObject() {
     let position = selectedObject?.object?.getWorldPosition(new THREE.Vector3())
-    if (selectedObject && selectedObject.object.name !== 'Sun') {
-        controls.enabled = false;
-        // isFreeze = false
+    if (selectedObject) {
         const newPosition = new THREE.Vector3(0,0,0)
         const SunPositionWorld = Sun.mesh.getWorldPosition(new THREE.Vector3())
         newPosition.copy(SunPositionWorld).add(position);
 
         camera.lookAt(position);
-        // position.y *=-20
-        // position.z = 100
-        // position.z -=10
-        camera.position.set(position.x, position.y, position.z - 10);
+        if (!isFreeze) {
+            camera.position.set(position.x, position.y, position.z - 10);
+        }
+        // camera.position.set(position.x, position.y, position.z - 10);
         // camera.position.lerp(position, 0.01);
         lastPositionCamera = newPosition
     }
@@ -149,13 +147,13 @@ const controller = () => {
     controls.enablePan = false;
     controls.enableZoom = false;
     controls.dampingFactor = 0.01;
-    controls.rotateSpeed = 0.0009;
+    controls.rotateSpeed = 0.0001;
     controls.target.set( 0, 0, 10 );
 }
 
 let sunPosition = Sun.mesh.position.clone();
 const aroundSun = (
-    mesh: Mesh,
+    mesh: Mesh | Camera,
     angleX: number,
     angleY: number,
     angleZ: number,
@@ -217,7 +215,7 @@ function onPlanetAround() {
     if (!isFreeze) {
         aroundSun(Mercury.mesh, 0, 0.06, 0, true)
         aroundSun(Venus.mesh, 0, 0.0099, 0, false, {x: 0.01, y: 0.01, z: 0.01})
-        aroundSun(Earth.mesh, 0, 0.006, 0, false, {x: 0, y: 0.01, z: 0})
+        aroundSun(Earth.mesh, 0, 0.0003, 0, false, {x: 0, y: 0.01, z: 0})
         aroundSun(Mars.mesh, 0.0001, 0.0007, 0.001, false, {x: 0.1, y: 1, z: 0.01})
         aroundSun(planet, 0.0001, 0.0004, 0, false, {x: 0, y: 0.007, z: 0})
         aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false, {x: 0, y: 0.08, z: 0})
@@ -228,7 +226,7 @@ function animate() {
     controller()
     onPlanetAround()
     requestAnimationFrame( animate );
-    followSelectedObject();
+    if (selectedObject) followSelectedObject();
     Sun.mesh.rotation.y += isFreeze ? 0 : 0.001
     renderer.render( scene, camera );
     controls.update();
