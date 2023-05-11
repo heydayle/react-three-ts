@@ -129,7 +129,7 @@ function followSelectedObject() {
     let position = selectedObject?.object?.getWorldPosition(new THREE.Vector3())
     if (selectedObject && selectedObject.object.name !== 'Sun') {
         controls.enabled = false;
-        isFreeze = false
+        // isFreeze = false
         const newPosition = new THREE.Vector3(0,0,0)
         const SunPositionWorld = Sun.mesh.getWorldPosition(new THREE.Vector3())
         newPosition.copy(SunPositionWorld).add(position);
