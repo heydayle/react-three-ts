@@ -136,7 +136,6 @@ function followSelectedObject() {
         if (!isFreeze) {
             camera.position.set(position.x, position.y, position.z - 10);
         }
-        // camera.position.set(position.x, position.y, position.z - 10);
         // camera.position.lerp(position, 0.01);
         lastPositionCamera = newPosition
     }
@@ -185,6 +184,19 @@ const aroundEarth = (
     mesh.position.applyAxisAngle(new THREE.Vector3(0, y + 1, 0), 1);
     mesh.position.add(earthPosition)
 }
+const aroundMesh = (
+    mesh: Mesh,
+    meshSpinning: Mesh | Camera,
+    angleX: number,
+    angleY: number,
+    angleZ: number,
+    reverse: Boolean = false) => {
+    const y: number = reverse ? -1 : 1
+    const meshPosition = meshSpinning.position.clone()
+    mesh.position.sub(meshPosition)
+    mesh.position.applyAxisAngle(new THREE.Vector3(0, y + 1, 0), 1);
+    mesh.position.add(meshPosition)
+}
 function zoomIn() {
     camera.fov -= 5
     camera.updateProjectionMatrix();
@@ -215,7 +227,7 @@ function onPlanetAround() {
     if (!isFreeze) {
         aroundSun(Mercury.mesh, 0, 0.06, 0, true)
         aroundSun(Venus.mesh, 0, 0.0099, 0, false, {x: 0.01, y: 0.01, z: 0.01})
-        aroundSun(Earth.mesh, 0, 0.0003, 0, false, {x: 0, y: 0.01, z: 0})
+        aroundSun(Earth.mesh, 0, 0.0006, 0, false, {x: 0, y: 0.01, z: 0})
         aroundSun(Mars.mesh, 0.0001, 0.0007, 0.001, false, {x: 0.1, y: 1, z: 0.01})
         aroundSun(planet, 0.0001, 0.0004, 0, false, {x: 0, y: 0.007, z: 0})
         aroundSun(Jupiter.mesh, 0.0007, 0.0001, 0, false, {x: 0, y: 0.08, z: 0})
